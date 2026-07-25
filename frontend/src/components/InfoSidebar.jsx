@@ -27,76 +27,78 @@ function SensorDetail({ device, latest, historyQuery, onOpenMonitor, onClose }) 
 
   return (
     <div className="info-detail">
-      <div className="panel-head">
-        <h2>Sensor · {device.dev_id}</h2>
-        <button type="button" className="btn btn-ghost" onClick={onClose}>
-          Kembali
-        </button>
-      </div>
+      <div className="info-detail-scroll">
+        <div className="panel-head">
+          <h2>Sensor · {device.dev_id}</h2>
+          <button type="button" className="btn btn-ghost" onClick={onClose}>
+            Kembali
+          </button>
+        </div>
 
-      <div className="mmi-badge" style={{ "--mmi": mmiColor(mmi) }}>
-        <span className="mmi-badge-value">{mmiLabel(mmi)}</span>
-        <span className="mmi-badge-label">
-          MMI terakhir
-          {latest
-            ? ` · ${new Date(latest.datetime).toLocaleString("id-ID")}`
-            : " · belum ada"}
-        </span>
-      </div>
+        <div className="mmi-badge" style={{ "--mmi": mmiColor(mmi) }}>
+          <span className="mmi-badge-value">{mmiLabel(mmi)}</span>
+          <span className="mmi-badge-label">
+            MMI terakhir
+            {latest
+              ? ` · ${new Date(latest.datetime).toLocaleString("id-ID")}`
+              : " · belum ada"}
+          </span>
+        </div>
 
-      <dl className="detail-grid">
-        <div>
-          <dt>Pemilik</dt>
-          <dd>{device.user_name || `User #${device.user_id}`}</dd>
-        </div>
-        <div>
-          <dt>Lokasi</dt>
-          <dd>{device.location || "—"}</dd>
-        </div>
-        <div>
-          <dt>Koordinat</dt>
-          <dd>
-            {device.latitude != null && device.longitude != null
-              ? `${Number(device.latitude).toFixed(5)}, ${Number(device.longitude).toFixed(5)}`
-              : "—"}
-          </dd>
-        </div>
-        <div>
-          <dt>IP</dt>
-          <dd>{device.ip || "Belum diisi"}</dd>
-        </div>
-        {detail &&
-          Object.entries(detail).map(([key, value]) => (
-            <div key={key}>
-              <dt>{key}</dt>
-              <dd>{String(value)}</dd>
-            </div>
-          ))}
-      </dl>
-
-      {latest ? (
-        <section className="history-latest">
-          <h3>History terakhir</h3>
-          <dl className="detail-grid">
-            {Object.entries(reading).map(([key, value]) => (
+        <dl className="detail-grid">
+          <div>
+            <dt>Pemilik</dt>
+            <dd>{device.user_name || `User #${device.user_id}`}</dd>
+          </div>
+          <div>
+            <dt>Lokasi</dt>
+            <dd>{device.location || "—"}</dd>
+          </div>
+          <div>
+            <dt>Koordinat</dt>
+            <dd>
+              {device.latitude != null && device.longitude != null
+                ? `${Number(device.latitude).toFixed(5)}, ${Number(device.longitude).toFixed(5)}`
+                : "—"}
+            </dd>
+          </div>
+          <div>
+            <dt>IP</dt>
+            <dd>{device.ip || "Belum diisi"}</dd>
+          </div>
+          {detail &&
+            Object.entries(detail).map(([key, value]) => (
               <div key={key}>
                 <dt>{key}</dt>
-                <dd>
-                  {key === "mmi" ? mmiLabel(value) : formatReadingValue(value)}
-                </dd>
+                <dd>{String(value)}</dd>
               </div>
             ))}
-            <div>
-              <dt>Waktu</dt>
-              <dd>{new Date(latest.datetime).toLocaleString("id-ID")}</dd>
-            </div>
-          </dl>
-        </section>
-      ) : (
-        <p className="muted">Belum ada pembacaan history untuk sensor ini.</p>
-      )}
+        </dl>
 
-      <DeviceHistoryList deviceId={device.id} historyQuery={historyQuery} />
+        {latest ? (
+          <section className="history-latest">
+            <h3>History terakhir</h3>
+            <dl className="detail-grid">
+              {Object.entries(reading).map(([key, value]) => (
+                <div key={key}>
+                  <dt>{key}</dt>
+                  <dd>
+                    {key === "mmi" ? mmiLabel(value) : formatReadingValue(value)}
+                  </dd>
+                </div>
+              ))}
+              <div>
+                <dt>Waktu</dt>
+                <dd>{new Date(latest.datetime).toLocaleString("id-ID")}</dd>
+              </div>
+            </dl>
+          </section>
+        ) : (
+          <p className="muted">Belum ada pembacaan history untuk sensor ini.</p>
+        )}
+
+        <DeviceHistoryList deviceId={device.id} historyQuery={historyQuery} />
+      </div>
 
       <div className="device-actions">
         <button

@@ -632,8 +632,23 @@ input {
   font-size: 0.82rem;
 }
 
-.info-detail {
+.info-detail-scroll {
+  flex: 1;
+  min-height: 0;
   overflow: auto;
+  padding-bottom: 0.35rem;
+}
+
+.device-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  flex-shrink: 0;
+  margin-top: 0.55rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--line);
+  background: rgba(16, 40, 51, 0.98);
+  z-index: 2;
 }
 
 .mmi-badge {
@@ -805,14 +820,6 @@ input {
   margin: 0.12rem 0 0;
   font-size: 0.84rem;
   word-break: break-word;
-}
-
-.device-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-top: 1rem;
-  padding-bottom: 0.25rem;
 }
 
 .btn-sensor {
