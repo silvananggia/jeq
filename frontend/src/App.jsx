@@ -181,15 +181,40 @@ export default function App() {
           </div>
         </div>
 
-        <button
-          type="button"
-          className="btn btn-ghost filters-toggle"
-          aria-expanded={filtersOpen}
-          aria-controls="topbar-filters"
-          onClick={() => setFiltersOpen((v) => !v)}
-        >
-          {filtersOpen ? "Tutup filter" : "Filter"}
-        </button>
+        <div className="topbar-mobile-actions">
+          <button
+            type="button"
+            className={`btn btn-ghost sensor-toggle ${sensorOpen ? "is-active" : ""}`}
+            aria-expanded={sensorOpen}
+            aria-controls="sensor-pane"
+            onClick={() => {
+              setSensorOpen((v) => !v);
+              setSidebarOpen(false);
+            }}
+          >
+            {sensorOpen ? "Tutup sensor" : "Sensor"}
+          </button>
+          <button
+            type="button"
+            className={`btn btn-ghost info-toggle ${sidebarOpen ? "is-active" : ""}`}
+            aria-expanded={sidebarOpen}
+            onClick={() => {
+              setSidebarOpen((v) => !v);
+              setSensorOpen(false);
+            }}
+          >
+            {sidebarOpen ? "Tutup info" : "Info"}
+          </button>
+          <button
+            type="button"
+            className="btn btn-ghost filters-toggle"
+            aria-expanded={filtersOpen}
+            aria-controls="topbar-filters"
+            onClick={() => setFiltersOpen((v) => !v)}
+          >
+            {filtersOpen ? "Tutup filter" : "Filter"}
+          </button>
+        </div>
 
         <div className="filters" id="topbar-filters">
           <div className="filter-group">
@@ -284,6 +309,7 @@ export default function App() {
         />
 
         <SensorList
+          id="sensor-pane"
           devices={devices}
           latestByDevice={latestByDevice}
           selectedDeviceId={selectedDeviceId}

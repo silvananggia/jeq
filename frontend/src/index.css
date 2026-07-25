@@ -70,7 +70,10 @@ input {
   z-index: 20;
 }
 
-.filters-toggle {
+.filters-toggle,
+.sensor-toggle,
+.info-toggle,
+.topbar-mobile-actions {
   display: none;
 }
 
@@ -1065,11 +1068,6 @@ input {
     pointer-events: auto;
   }
 
-  .mobile-scrim,
-  .mobile-dock {
-    display: none !important;
-  }
-
   .map-legend {
     max-width: calc(100% - 1.5rem);
     flex-wrap: wrap;
@@ -1094,6 +1092,15 @@ input {
   }
 }
 
+/* Tablet only — jangan ikut ke smartphone */
+@media (min-width: 721px) and (max-width: 900px) {
+  .mobile-scrim,
+  .mobile-dock,
+  .topbar-mobile-actions {
+    display: none !important;
+  }
+}
+
 /* Smartphone */
 @media (max-width: 720px) {
   :root {
@@ -1101,11 +1108,32 @@ input {
     --sensor-w: min(100% - 3rem, 320px);
   }
 
-  .filters-toggle {
-    display: inline-flex;
+  .topbar-mobile-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
     margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  .filters-toggle,
+  .sensor-toggle,
+  .info-toggle {
+    display: inline-flex;
+    align-items: center;
     border: 1px solid var(--line);
     background: var(--bg-elev);
+    min-height: 2.25rem;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+
+  .sensor-toggle.is-active,
+  .info-toggle.is-active {
+    background: rgba(232, 93, 4, 0.22);
+    border-color: rgba(232, 93, 4, 0.5);
+    color: #ffd8b5;
   }
 
   .topbar {
@@ -1180,7 +1208,7 @@ input {
   }
 
   .mobile-scrim {
-    display: block;
+    display: block !important;
     position: absolute;
     inset: 0;
     z-index: 8;
@@ -1202,7 +1230,7 @@ input {
   }
 
   .mobile-dock {
-    display: flex;
+    display: flex !important;
     position: absolute;
     right: max(0.75rem, env(safe-area-inset-right));
     bottom: max(0.75rem, env(safe-area-inset-bottom));

@@ -1,6 +1,7 @@
 import { historyMmi, mmiColor, mmiLabel } from "../utils/mmi";
 
 export default function SensorList({
+  id,
   devices,
   latestByDevice,
   selectedDeviceId,
@@ -8,7 +9,7 @@ export default function SensorList({
   onClose,
 }) {
   return (
-    <aside className="sensor-pane">
+    <aside className="sensor-pane" id={id}>
       <div className="panel-head">
         <h2>Sensor Gempa</h2>
         <div className="panel-head-actions">
