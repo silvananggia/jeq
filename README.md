@@ -95,14 +95,17 @@ curl -X POST http://localhost:4000/api/histories \
   }'
 
 # Atau nested object
-curl -X POST http://localhost:4000/api/histories \
+curl -X POST http://100.95.74.7:4000/api/histories \
   -H 'Content-Type: application/json' \
   -d '{
     "dev_id": "jeq-00001",
     "data": {
       "mmi": 2.3,
       "horiz_pga": 0.015,
-      "custom_metric": 1.2
+      "vert_pga": 0.009,
+      "vh_ratio": 0.6,
+      "pgv_cm": 0.5,
+      "dom_freq": 4.2
     }
   }'
 ```

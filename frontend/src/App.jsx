@@ -176,7 +176,7 @@ export default function App() {
         <div className="brand">
           <span className="brand-mark">JEQ</span>
           <div>
-            <h1>Jasindo Eartquake Platform</h1>
+            <h1>Jasindo Earthquake Platform</h1>
             <p>Informasi Gempa Terkini · Sensor Gempa</p>
           </div>
         </div>
