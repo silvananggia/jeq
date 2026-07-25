@@ -1,27 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-
-/** Refresh HTTP iframe berkala (tanpa WebSocket). 0 = off. */
-const REFRESH_MS = 5000;
+import { useEffect, useState } from "react";
 
 export default function IframeModal({ title, url, onClose }) {
   const [loading, setLoading] = useState(true);
-  const [tick, setTick] = useState(0);
-  const iframeRef = useRef(null);
 
   useEffect(() => {
     setLoading(true);
-    setTick(0);
-  }, [url]);
-
-  useEffect(() => {
-    if (!url || !REFRESH_MS) return undefined;
-    const id = window.setInterval(() => setTick((n) => n + 1), REFRESH_MS);
-    return () => window.clearInterval(id);
   }, [url]);
 
   if (!url) return null;
-
-  const src = tick === 0 ? url : `${url}${url.includes("?") ? "&" : "?"}_r=${tick}`;
 
   return (
     <div className="modal-backdrop" role="presentation" onClick={onClose}>
@@ -53,10 +39,8 @@ export default function IframeModal({ title, url, onClose }) {
             </div>
           )}
           <iframe
-            ref={iframeRef}
-            key={src}
             className={`modal-iframe ${loading ? "is-loading" : ""}`}
-            src={src}
+            src={url}
             title={title}
             allow="fullscreen"
             onLoad={() => setLoading(false)}
