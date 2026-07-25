@@ -29,7 +29,7 @@ function SensorDetail({ device, latest, onOpenMonitor, onClose }) {
       <div className="panel-head">
         <h2>Sensor · {device.dev_id}</h2>
         <button type="button" className="btn btn-ghost" onClick={onClose}>
-          Tutup
+          Kembali
         </button>
       </div>
 
@@ -130,6 +130,7 @@ function SensorDetail({ device, latest, onOpenMonitor, onClose }) {
 export default function InfoSidebar({
   open,
   onToggle,
+  onClose,
   earthquakes,
   selectedId,
   onSelectQuake,
@@ -143,7 +144,7 @@ export default function InfoSidebar({
   onSync,
 }) {
   return (
-    <div className={`info-rail ${open ? "is-open" : ""}`}>
+    <div className={`info-rail ${open ? "is-open" : "is-closed"}`}>
       <button
         type="button"
         className="sidebar-toggle"
@@ -155,7 +156,22 @@ export default function InfoSidebar({
         {open ? "›" : "‹"}
       </button>
 
-      <aside className="info-sidebar">
+      <aside className="info-sidebar" aria-hidden={!open}>
+        {onClose && (
+          <div className="panel-head-mobile-bar">
+            <span className="panel-head-mobile-title">
+              {selectedDevice ? selectedDevice.dev_id : "Informasi Gempa"}
+            </span>
+            <button
+              type="button"
+              className="btn btn-ghost panel-close-mobile"
+              onClick={onClose}
+            >
+              Tutup
+            </button>
+          </div>
+        )}
+
         {selectedDevice ? (
           <SensorDetail
             device={selectedDevice}
@@ -165,7 +181,7 @@ export default function InfoSidebar({
           />
         ) : (
           <div className="info-quakes">
-            <div className="panel-head">
+            <div className="panel-head panel-head-desktop">
               <h2>Informasi Gempa Terkini</h2>
               <span>{loading ? "…" : `${earthquakes.length} event`}</span>
             </div>

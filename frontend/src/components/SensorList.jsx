@@ -5,12 +5,24 @@ export default function SensorList({
   latestByDevice,
   selectedDeviceId,
   onSelect,
+  onClose,
 }) {
   return (
     <aside className="sensor-pane">
       <div className="panel-head">
         <h2>Sensor Gempa</h2>
-        <span>{devices.length}</span>
+        <div className="panel-head-actions">
+          <span>{devices.length}</span>
+          {onClose && (
+            <button
+              type="button"
+              className="btn btn-ghost panel-close-mobile"
+              onClick={onClose}
+            >
+              Tutup
+            </button>
+          )}
+        </div>
       </div>
 
       {!devices.length ? (

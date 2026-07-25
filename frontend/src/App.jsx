@@ -34,7 +34,13 @@ export default function App() {
   const [histories, setHistories] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [selectedDeviceId, setSelectedDeviceId] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(() =>
+    typeof window !== "undefined"
+      ? window.matchMedia("(min-width: 721px)").matches
+      : true
+  );
+  const [sensorOpen, setSensorOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [monitor, setMonitor] = useState(null);
   const [filterMode, setFilterMode] = useState("hours"); // hours | range
   const [hours, setHours] = useState(24);
@@ -88,7 +94,11 @@ export default function App() {
 
   useEffect(() => {
     function onKey(e) {
-      if (e.key === "Escape") setMonitor(null);
+      if (e.key === "Escape") {
+        setMonitor(null);
+        setSensorOpen(false);
+        setFiltersOpen(false);
+      }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -131,6 +141,7 @@ export default function App() {
     if (device) {
       setSelectedId(null);
       setSidebarOpen(true);
+      setSensorOpen(false);
     }
   }
 
@@ -138,6 +149,7 @@ export default function App() {
     setSelectedId(eq.id);
     setSelectedDeviceId(null);
     setSidebarOpen(true);
+    setSensorOpen(false);
   }
 
   function handleOpenMonitor(device, kind) {
@@ -160,7 +172,7 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <header className="topbar">
+      <header className={`topbar ${filtersOpen ? "filters-open" : ""}`}>
         <div className="brand">
           <span className="brand-mark">JEQ</span>
           <div>
@@ -169,7 +181,17 @@ export default function App() {
           </div>
         </div>
 
-        <div className="filters">
+        <button
+          type="button"
+          className="btn btn-ghost filters-toggle"
+          aria-expanded={filtersOpen}
+          aria-controls="topbar-filters"
+          onClick={() => setFiltersOpen((v) => !v)}
+        >
+          {filtersOpen ? "Tutup filter" : "Filter"}
+        </button>
+
+        <div className="filters" id="topbar-filters">
           <div className="filter-group">
             <span className="filter-label">Interval</span>
             <div className="chip-row">
@@ -243,12 +265,30 @@ export default function App() {
         </div>
       )}
 
-      <main className={`layout ${sidebarOpen ? "sidebar-open" : "sidebar-closed"}`}>
+      <main
+        className={[
+          "layout",
+          sidebarOpen ? "sidebar-open" : "sidebar-closed",
+          sensorOpen ? "sensor-open" : "sensor-closed",
+        ].join(" ")}
+      >
+        <button
+          type="button"
+          className={`mobile-scrim${sensorOpen || sidebarOpen ? " is-visible" : ""}`}
+          aria-label="Tutup panel"
+          tabIndex={sensorOpen || sidebarOpen ? 0 : -1}
+          onClick={() => {
+            setSensorOpen(false);
+            setSidebarOpen(false);
+          }}
+        />
+
         <SensorList
           devices={devices}
           latestByDevice={latestByDevice}
           selectedDeviceId={selectedDeviceId}
           onSelect={handleSelectDevice}
+          onClose={() => setSensorOpen(false)}
         />
 
         <section className="map-pane">
@@ -271,7 +311,11 @@ export default function App() {
 
         <InfoSidebar
           open={sidebarOpen}
-          onToggle={() => setSidebarOpen((v) => !v)}
+          onToggle={() => {
+            setSidebarOpen((v) => !v);
+            setSensorOpen(false);
+          }}
+          onClose={() => setSidebarOpen(false)}
           earthquakes={earthquakes}
           selectedId={selectedId}
           onSelectQuake={handleSelectQuake}
@@ -284,6 +328,31 @@ export default function App() {
           onRefresh={loadData}
           onSync={handleSync}
         />
+
+        <div className="mobile-dock" role="toolbar" aria-label="Navigasi panel">
+          <button
+            type="button"
+            className={`btn btn-dock ${sensorOpen ? "is-active" : ""}`}
+            aria-pressed={sensorOpen}
+            onClick={() => {
+              setSensorOpen((v) => !v);
+              setSidebarOpen(false);
+            }}
+          >
+            Sensor
+          </button>
+          <button
+            type="button"
+            className={`btn btn-dock ${sidebarOpen ? "is-active" : ""}`}
+            aria-pressed={sidebarOpen}
+            onClick={() => {
+              setSidebarOpen((v) => !v);
+              setSensorOpen(false);
+            }}
+          >
+            Info
+          </button>
+        </div>
       </main>
 
       {monitor && (
