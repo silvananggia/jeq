@@ -14,7 +14,7 @@ import { latestHistoryByDevice } from "./utils/mmi";
 import { DEFAULT_BASEMAP } from "./utils/basemaps";
 
 const MONITOR_PORTS = {
-  sensor: { port: 5000, title: "Monitor sensor", path: "" },
+  sensor: { port: 5000, title: "Monitor sensor", path: "/" },
   condition: { port: 5001, title: "Kondisi device", path: "/dashboard" },
 };
 
@@ -143,9 +143,13 @@ export default function App() {
   function handleOpenMonitor(device, kind) {
     const cfg = MONITOR_PORTS[kind];
     if (!device?.ip || !cfg) return;
+    // Same-origin proxy (nginx /device-proxy) — hindari blokir Chrome
+    // "public page → local network" saat iframe langsung ke IP privat/Tailscale.
+    const path = cfg.path || "/";
+    const normalized = path.startsWith("/") ? path : `/${path}`;
     setMonitor({
       title: `${cfg.title} · ${device.dev_id}`,
-      url: `http://${device.ip}:${cfg.port}${cfg.path || ""}`,
+      url: `/device-proxy/${device.ip}/${cfg.port}${normalized}`,
     });
   }
 

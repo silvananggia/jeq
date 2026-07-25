@@ -101,7 +101,11 @@ function SensorDetail({ device, latest, onOpenMonitor, onClose }) {
           className="btn btn-sensor"
           disabled={!device.ip}
           onClick={() => onOpenMonitor(device, "sensor")}
-          title={device.ip ? `http://${device.ip}:5000` : "IP belum diisi"}
+          title={
+            device.ip
+              ? `/device-proxy/${device.ip}/5000/`
+              : "IP belum diisi"
+          }
         >
           Monitor sensor
         </button>
@@ -112,7 +116,7 @@ function SensorDetail({ device, latest, onOpenMonitor, onClose }) {
           onClick={() => onOpenMonitor(device, "condition")}
           title={
             device.ip
-              ? `http://${device.ip}:5001/dashboard`
+              ? `/device-proxy/${device.ip}/5001/dashboard`
               : "IP belum diisi"
           }
         >

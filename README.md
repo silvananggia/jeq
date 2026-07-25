@@ -27,8 +27,12 @@ sudo ./scripts/setup-database.sh
 
 | Service | URL |
 |---------|-----|
-| Frontend | http://SERVER_IP:8080 |
+| Frontend | http://SERVER_IP |
 | Backend API | http://SERVER_IP:4000 |
+
+Monitor sensor di iframe memakai proxy same-origin (`/device-proxy/...`) supaya Chrome tidak memblokir akses dari halaman publik ke IP lokal/Tailscale.
+
+Pastikan port 80 host kosong (hentikan apache/nginx host jika ada) sebelum `deploy-app.sh`.
 
 Perintah berguna:
 
