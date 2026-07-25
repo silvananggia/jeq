@@ -35,6 +35,19 @@ fi
 
 cd "${ROOT_DIR}"
 
+for f in \
+  "${ROOT_DIR}/backend/Dockerfile" \
+  "${ROOT_DIR}/backend/package.json" \
+  "${ROOT_DIR}/backend/src/index.js" \
+  "${ROOT_DIR}/frontend/Dockerfile" \
+  "${ROOT_DIR}/frontend/package.json"; do
+  if [[ ! -s "$f" ]]; then
+    echo "ERROR: file wajib hilang/kosong: $f"
+    echo "Pastikan seluruh folder backend/ & frontend/ ikut di-copy/push ke server."
+    exit 1
+  fi
+done
+
 ENCODED_PASSWORD="$(urlencode "${DB_PASSWORD}")"
 ENV_FILE="${ROOT_DIR}/backend/.env"
 
