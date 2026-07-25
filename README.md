@@ -30,7 +30,7 @@ sudo ./scripts/setup-database.sh
 | Frontend | http://SERVER_IP |
 | Backend API | http://SERVER_IP:4000 |
 
-**Arsitektur iframe sensor:** browser → server publik (`/device-proxy/IP/PORT/...`) → device Tailscale. Hanya proxy HTTP (tanpa WebSocket / tanpa auto-refresh).
+**Arsitektur iframe sensor:** browser → `/device-proxy/IP/PORT/...` → device Tailscale. Socket.IO realtime di-proxy lewat `/socket.io/` (Referer/cookie mengarah ke device yang sama). Tanpa auto-refresh.
 
 Syarat: server dan Raspberry Pi di **tailnet yang sama**, IP di `devices` = IP Tailscale.
 
