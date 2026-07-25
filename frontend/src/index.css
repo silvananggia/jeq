@@ -676,6 +676,117 @@ input {
   margin-bottom: 0.35rem;
 }
 
+.history-list-section {
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-height: 0;
+}
+
+.history-list-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.history-list-head h3 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 0.95rem;
+}
+
+.history-list-error {
+  margin: 0;
+  color: #ffb4ba;
+  font-size: 0.8rem;
+}
+
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.history-item {
+  width: 100%;
+  display: flex;
+  gap: 0.55rem;
+  align-items: flex-start;
+  text-align: left;
+  color: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 0.45rem;
+  padding: 0.45rem 0.4rem;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.history-item:hover,
+.history-item.is-open {
+  background: color-mix(in srgb, var(--mmi, var(--sensor)) 12%, transparent);
+  border-color: color-mix(in srgb, var(--mmi, var(--sensor)) 35%, transparent);
+}
+
+.history-mmi {
+  flex-shrink: 0;
+  width: 2.1rem;
+  height: 2.1rem;
+  display: grid;
+  place-items: center;
+  border-radius: 0.35rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.78rem;
+  background: var(--mmi, #5c7a86);
+  color: #0b1c24;
+}
+
+.history-meta {
+  display: grid;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.history-meta strong {
+  font-size: 0.8rem;
+  font-weight: 560;
+}
+
+.history-meta small {
+  color: var(--muted);
+  font-size: 0.7rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-item-detail {
+  margin: 0 0 0.35rem;
+  padding: 0.35rem 0.4rem 0.55rem 2.85rem;
+}
+
+.history-paging {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-top: 0.15rem;
+}
+
+.history-paging .btn {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.78rem;
+  min-width: 4.2rem;
+}
+
 .detail-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

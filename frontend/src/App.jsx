@@ -347,6 +347,7 @@ export default function App() {
           onSelectQuake={handleSelectQuake}
           selectedDevice={selectedDevice}
           latestHistory={latestHistory}
+          historyQuery={historyQuery}
           onClearDevice={() => setSelectedDeviceId(null)}
           onOpenMonitor={handleOpenMonitor}
           loading={loading}

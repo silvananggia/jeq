@@ -1,4 +1,5 @@
 import EarthquakeList from "./EarthquakeList";
+import DeviceHistoryList from "./DeviceHistoryList";
 import { historyData, historyMmi, mmiColor, mmiLabel } from "../utils/mmi";
 
 function formatDetail(detail) {
@@ -19,7 +20,7 @@ function formatReadingValue(value) {
   return String(value);
 }
 
-function SensorDetail({ device, latest, onOpenMonitor, onClose }) {
+function SensorDetail({ device, latest, historyQuery, onOpenMonitor, onClose }) {
   const detail = formatDetail(device.detail);
   const reading = historyData(latest);
   const mmi = historyMmi(latest);
@@ -95,6 +96,8 @@ function SensorDetail({ device, latest, onOpenMonitor, onClose }) {
         <p className="muted">Belum ada pembacaan history untuk sensor ini.</p>
       )}
 
+      <DeviceHistoryList deviceId={device.id} historyQuery={historyQuery} />
+
       <div className="device-actions">
         <button
           type="button"
@@ -136,6 +139,7 @@ export default function InfoSidebar({
   onSelectQuake,
   selectedDevice,
   latestHistory,
+  historyQuery,
   onClearDevice,
   onOpenMonitor,
   loading,
@@ -176,6 +180,7 @@ export default function InfoSidebar({
           <SensorDetail
             device={selectedDevice}
             latest={latestHistory}
+            historyQuery={historyQuery}
             onOpenMonitor={onOpenMonitor}
             onClose={onClearDevice}
           />

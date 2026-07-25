@@ -49,8 +49,12 @@ export function getHistories({
   to,
   days,
   limit = 50,
+  page = 1,
 } = {}) {
-  const params = new URLSearchParams({ limit: String(limit) });
+  const params = new URLSearchParams({
+    limit: String(limit),
+    page: String(page),
+  });
   if (deviceId) params.set("device_id", String(deviceId));
   if (from) params.set("from", from);
   if (to) params.set("to", to);

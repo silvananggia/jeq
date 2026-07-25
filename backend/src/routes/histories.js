@@ -42,7 +42,9 @@ function extractData(body = {}) {
 router.get("/", async (req, res) => {
   try {
     const deviceId = req.query.device_id;
-    const limit = Math.min(Number(req.query.limit) || 100, 500);
+    const limit = Math.min(Math.max(Number(req.query.limit) || 100, 1), 500);
+    const page = Math.max(Number(req.query.page) || 1, 1);
+    const offset = (page - 1) * limit;
     const hours = req.query.hours;
     const days = req.query.days;
     const from = req.query.from;
@@ -74,19 +76,39 @@ router.get("/", async (req, res) => {
       where.push(`h.datetime >= NOW() - ($${params.length} || ' days')::interval`);
     }
 
-    params.push(limit);
+    const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
 
+    const countResult = await query(
+      `SELECT COUNT(*)::int AS total
+       FROM histories h
+       JOIN devices d ON d.id = h.device_id
+       ${whereSql}`,
+      params
+    );
+    const total = countResult.rows[0]?.total ?? 0;
+
+    const listParams = [...params, limit, offset];
     const { rows } = await query(
       `SELECT h.id, h.device_id, h.datetime, h.data, h.created_at,
               d.dev_id, d.location AS device_location
        FROM histories h
        JOIN devices d ON d.id = h.device_id
-       ${where.length ? `WHERE ${where.join(" AND ")}` : ""}
+       ${whereSql}
        ORDER BY h.datetime DESC
-       LIMIT $${params.length}`,
-      params
+       LIMIT $${listParams.length - 1}
+       OFFSET $${listParams.length}`,
+      listParams
     );
-    res.json({ data: rows, count: rows.length });
+
+    const pages = Math.max(1, Math.ceil(total / limit));
+    res.json({
+      data: rows,
+      count: rows.length,
+      total,
+      page,
+      limit,
+      pages,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
