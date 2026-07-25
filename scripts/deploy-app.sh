@@ -19,8 +19,21 @@ FRONTEND_PORT="${FRONTEND_PORT:-80}"
 USGS_SYNC_INTERVAL_MS="${USGS_SYNC_INTERVAL_MS:-900000}"
 
 urlencode() {
-  # Encode password untuk DATABASE_URL
   python3 -c 'import sys,urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$1"
+}
+
+public_url() {
+  local port="$1"
+  local ip
+  ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
+  if [[ -z "${ip}" ]]; then
+    ip="SERVER_IP"
+  fi
+  if [[ "${port}" == "80" ]]; then
+    echo "http://${ip}"
+  else
+    echo "http://${ip}:${port}"
+  fi
 }
 
 if ! command -v docker >/dev/null 2>&1; then
@@ -48,6 +61,23 @@ for f in \
   fi
 done
 
+# Buka firewall lokal jika ufw aktif
+if command -v ufw >/dev/null 2>&1; then
+  if ufw status 2>/dev/null | grep -qi "Status: active"; then
+    echo "==> Buka UFW port ${FRONTEND_PORT} dan ${BACKEND_PORT}"
+    ufw allow "${FRONTEND_PORT}/tcp" || true
+    ufw allow "${BACKEND_PORT}/tcp" || true
+  fi
+fi
+
+# Cek port host bentrok (selain docker yang akan kita ganti)
+if command -v ss >/dev/null 2>&1; then
+  if ss -lnt | awk '{print $4}' | grep -qE "[:.]${FRONTEND_PORT}$"; then
+    # OK jika sudah dipegang docker-proxy dari stack lama; compose up akan reuse
+    echo "==> Port ${FRONTEND_PORT} sudah terpakai — compose akan mencoba bind ulang"
+  fi
+fi
+
 ENCODED_PASSWORD="$(urlencode "${DB_PASSWORD}")"
 ENV_FILE="${ROOT_DIR}/backend/.env"
 
@@ -58,21 +88,42 @@ DATABASE_URL=postgresql://${DB_USER}:${ENCODED_PASSWORD}@host.docker.internal:${
 USGS_SYNC_INTERVAL_MS=${USGS_SYNC_INTERVAL_MS}
 EOF
 
-# Port mapping compose (opsional via root .env)
 cat > "${ROOT_DIR}/.env" <<EOF
 BACKEND_PORT=${BACKEND_PORT}
 FRONTEND_PORT=${FRONTEND_PORT}
 EOF
 
 echo "==> Build & start containers"
+docker compose down --remove-orphans || true
 docker compose up -d --build
 
 echo "==> Status"
 docker compose ps
 
+echo "==> Verifikasi listen lokal"
+sleep 2
+if curl -fsS -o /dev/null -w "frontend HTTP %{http_code}\n" "http://127.0.0.1:${FRONTEND_PORT}/" ; then
+  echo "Frontend OK di port ${FRONTEND_PORT}"
+else
+  echo "ERROR: Frontend tidak merespons di 127.0.0.1:${FRONTEND_PORT}"
+  echo "Cek: docker compose logs --tail=80 frontend"
+  docker compose logs --tail=40 frontend || true
+  exit 1
+fi
+
+if curl -fsS -o /dev/null -w "backend HTTP %{http_code}\n" "http://127.0.0.1:${BACKEND_PORT}/api/health" ; then
+  echo "Backend OK di port ${BACKEND_PORT}"
+else
+  echo "WARNING: Backend /api/health gagal — cek DB & logs"
+  docker compose logs --tail=40 backend || true
+fi
+
 echo
 echo "Deploy selesai:"
-echo "  Frontend  http://$(hostname -I 2>/dev/null | awk '{print $1}'):${FRONTEND_PORT}"
-echo "  Backend   http://$(hostname -I 2>/dev/null | awk '{print $1}'):${BACKEND_PORT}"
+echo "  Frontend  $(public_url "${FRONTEND_PORT}")"
+echo "  Backend   $(public_url "${BACKEND_PORT}")/api/health"
 echo
-echo "Log: docker compose -f ${ROOT_DIR}/docker-compose.yml logs -f"
+echo "Jika dari internet masih refused:"
+echo "  1) Cloud firewall / security group harus allow TCP ${FRONTEND_PORT} (dan ${BACKEND_PORT})"
+echo "  2) Di server: sudo ss -lntp | grep -E ':${FRONTEND_PORT}|:${BACKEND_PORT}'"
+echo "  3) Log: docker compose -f ${ROOT_DIR}/docker-compose.yml logs -f"
