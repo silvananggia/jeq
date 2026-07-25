@@ -296,7 +296,6 @@ input {
   overflow: hidden;
   z-index: 5;
   padding: 0.75rem 0.65rem 0.65rem;
-  animation: rise 400ms ease both;
 }
 
 .info-rail {
@@ -1165,34 +1164,28 @@ input {
   .layout.sidebar-open,
   .layout.sensor-closed,
   .layout.sensor-open {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-  }
-
-  .map-pane,
-  .sensor-pane,
-  .info-rail,
-  .mobile-scrim {
-    grid-column: 1;
-    grid-row: 1;
+    display: block;
+    position: relative;
+    overflow: hidden;
   }
 
   .map-pane {
-    position: relative;
+    position: absolute;
+    inset: 0;
     z-index: 1;
     min-width: 0;
     min-height: 0;
-    width: 100%;
-    height: 100%;
+    width: auto;
+    height: auto;
   }
 
   .mobile-scrim {
     display: block;
-    position: relative;
+    position: absolute;
+    inset: 0;
     z-index: 8;
-    width: 100%;
-    height: 100%;
+    width: auto;
+    height: auto;
     border: 0;
     padding: 0;
     margin: 0;
@@ -1263,41 +1256,49 @@ input {
   }
 
   .sensor-pane {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
     z-index: 12;
     width: var(--sensor-w);
     max-width: 86vw;
     height: 100%;
-    justify-self: start;
     border-right: 1px solid var(--line);
     border-bottom: none;
     box-shadow: var(--shadow);
+    animation: none !important;
+    transition: transform 280ms ease, opacity 220ms ease, visibility 280ms ease;
     transform: translateX(-105%);
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    transition: transform 280ms ease, opacity 220ms ease;
   }
 
   .layout.sensor-open .sensor-pane {
     transform: translateX(0);
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
   }
 
   .layout.sensor-closed .sensor-pane,
   .layout:not(.sensor-open) .sensor-pane {
-    transform: translateX(-105%);
-    opacity: 0;
-    pointer-events: none;
+    transform: translateX(-105%) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
   }
 
   .info-rail {
-    position: relative;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
     z-index: 12;
     width: var(--info-w);
     max-width: 86vw;
     height: 100%;
-    justify-self: end;
     pointer-events: none;
   }
 
@@ -1305,10 +1306,12 @@ input {
     width: 100%;
     height: 100%;
     box-shadow: var(--shadow);
+    animation: none !important;
     transform: translateX(110%);
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    transition: transform 280ms ease, opacity 220ms ease;
+    transition: transform 280ms ease, opacity 220ms ease, visibility 280ms ease;
   }
 
   .layout.sidebar-open .info-rail {
@@ -1318,14 +1321,16 @@ input {
   .layout.sidebar-open .info-sidebar {
     transform: translateX(0);
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
   }
 
   .layout.sidebar-closed .info-sidebar,
   .layout:not(.sidebar-open) .info-sidebar {
-    transform: translateX(110%);
-    opacity: 0;
-    pointer-events: none;
+    transform: translateX(110%) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
   }
 
   .sidebar-toggle {
