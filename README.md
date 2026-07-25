@@ -30,9 +30,9 @@ sudo ./scripts/setup-database.sh
 | Frontend | http://SERVER_IP |
 | Backend API | http://SERVER_IP:4000 |
 
-**Arsitektur iframe sensor:** browser hanya bicara ke server publik. Server (yang join Tailscale) mem-proxy ke IP device `100.x` lewat `/device-proxy/...`. Iframe langsung ke Tailscale dari halaman publik akan diblokir Chrome.
+**Arsitektur iframe sensor:** browser → server publik (`/device-proxy/IP/PORT/...`) → device Tailscale. Hanya proxy HTTP (tanpa WebSocket); iframe di-refresh berkala agar tampilan mendekati realtime.
 
-Syarat: server dan Raspberry Pi ada di **tailnet yang sama**, dan IP di tabel `devices` adalah IP Tailscale.
+Syarat: server dan Raspberry Pi di **tailnet yang sama**, IP di `devices` = IP Tailscale.
 
 Perintah berguna:
 

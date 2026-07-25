@@ -22,15 +22,6 @@ export default defineConfig({
       "/device-proxy": {
         target: "http://127.0.0.1",
         changeOrigin: true,
-        ws: true,
-        configure: (proxy) => {
-          proxy.on("proxyReq", (proxyReq, req) => {
-            const parsed = deviceProxyTarget(req.url || "");
-            if (!parsed) return;
-            const { hostname, port } = new URL(parsed.target);
-            proxyReq.setHeader("host", `${hostname}:${port}`);
-          });
-        },
         router: (req) => deviceProxyTarget(req.url || "")?.target,
         rewrite: (path) => deviceProxyTarget(path)?.path || "/",
       },
