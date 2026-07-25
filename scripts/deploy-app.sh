@@ -100,13 +100,16 @@ docker compose up -d --build
 echo "==> Status"
 docker compose ps
 
+# Dengan network_mode: host, port frontend tidak muncul di "PORTS" — cek listen host.
 echo "==> Verifikasi listen lokal"
 sleep 2
-if curl -fsS -o /dev/null -w "frontend HTTP %{http_code}\n" "http://127.0.0.1:${FRONTEND_PORT}/" ; then
-  echo "Frontend OK di port ${FRONTEND_PORT}"
+FRONTEND_CHECK_PORT="${FRONTEND_PORT:-80}"
+if curl -fsS -o /dev/null -w "frontend HTTP %{http_code}\n" "http://127.0.0.1:${FRONTEND_CHECK_PORT}/" ; then
+  echo "Frontend OK di port ${FRONTEND_CHECK_PORT}"
 else
-  echo "ERROR: Frontend tidak merespons di 127.0.0.1:${FRONTEND_PORT}"
+  echo "ERROR: Frontend tidak merespons di 127.0.0.1:${FRONTEND_CHECK_PORT}"
   echo "Cek: docker compose logs --tail=80 frontend"
+  echo "Pastikan port ${FRONTEND_CHECK_PORT} kosong di host (apache/nginx lain)."
   docker compose logs --tail=40 frontend || true
   exit 1
 fi

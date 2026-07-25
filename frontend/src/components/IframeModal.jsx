@@ -1,10 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+/** Interval refresh iframe (ms). 0 = matikan. Cadangan jika device tanpa WS. */
+const REFRESH_MS = 3000;
 
 export default function IframeModal({ title, url, onClose }) {
   const [loading, setLoading] = useState(true);
+  const iframeRef = useRef(null);
 
   useEffect(() => {
     setLoading(true);
+  }, [url]);
+
+  // Soft-realtime: reload berkala lewat same-origin proxy (tanpa andalkan WS)
+  useEffect(() => {
+    if (!url || !REFRESH_MS) return undefined;
+    const id = window.setInterval(() => {
+      const frame = iframeRef.current;
+      if (!frame) return;
+      try {
+        frame.contentWindow?.location.reload();
+      } catch {
+        frame.src = url;
+      }
+    }, REFRESH_MS);
+    return () => window.clearInterval(id);
   }, [url]);
 
   if (!url) return null;
@@ -39,6 +58,7 @@ export default function IframeModal({ title, url, onClose }) {
             </div>
           )}
           <iframe
+            ref={iframeRef}
             className={`modal-iframe ${loading ? "is-loading" : ""}`}
             src={url}
             title={title}

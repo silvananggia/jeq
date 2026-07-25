@@ -30,9 +30,9 @@ sudo ./scripts/setup-database.sh
 | Frontend | http://SERVER_IP |
 | Backend API | http://SERVER_IP:4000 |
 
-Monitor sensor di iframe memakai proxy same-origin (`/device-proxy/...`) supaya Chrome tidak memblokir akses dari halaman publik ke IP lokal/Tailscale.
+**Arsitektur iframe sensor:** browser hanya bicara ke server publik. Server (yang join Tailscale) mem-proxy ke IP device `100.x` lewat `/device-proxy/...`. Iframe langsung ke Tailscale dari halaman publik akan diblokir Chrome.
 
-Pastikan port 80 host kosong (hentikan apache/nginx host jika ada) sebelum `deploy-app.sh`.
+Syarat: server dan Raspberry Pi ada di **tailnet yang sama**, dan IP di tabel `devices` adalah IP Tailscale.
 
 Perintah berguna:
 
