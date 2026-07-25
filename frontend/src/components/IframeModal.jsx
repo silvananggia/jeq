@@ -42,7 +42,9 @@ export default function IframeModal({ title, url, onClose }) {
             className={`modal-iframe ${loading ? "is-loading" : ""}`}
             src={url}
             title={title}
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+            allow="fullscreen"
+            referrerPolicy="no-referrer-when-downgrade"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals"
             onLoad={() => setLoading(false)}
           />
         </div>

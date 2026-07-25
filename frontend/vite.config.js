@@ -22,6 +22,7 @@ export default defineConfig({
       "/device-proxy": {
         target: "http://127.0.0.1",
         changeOrigin: true,
+        ws: true,
         configure: (proxy) => {
           proxy.on("proxyReq", (proxyReq, req) => {
             const parsed = deviceProxyTarget(req.url || "");
