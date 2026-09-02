@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { query } from "./db.js";
-import { syncIndonesiaEarthquakes } from "./services/usgs.js";
+import { syncIndonesiaEarthquakes } from "./services/bmkg.js";
 import earthquakesRouter from "./routes/earthquakes.js";
 import usersRouter from "./routes/users.js";
 import devicesRouter from "./routes/devices.js";
@@ -12,7 +12,9 @@ dotenv.config();
 
 const app = express();
 const PORT = Number(process.env.PORT) || 4000;
-const SYNC_INTERVAL_MS = Number(process.env.USGS_SYNC_INTERVAL_MS) || 15 * 60 * 1000;
+const SYNC_INTERVAL_MS =
+  Number(process.env.BMKG_SYNC_INTERVAL_MS || process.env.USGS_SYNC_INTERVAL_MS) ||
+  15 * 60 * 1000;
 
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
@@ -39,11 +41,11 @@ app.use((err, _req, res, _next) => {
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`JEQ backend listening on http://0.0.0.0:${PORT}`);
 
-  // Initial USGS sync + periodic refresh for Indonesia
+  // Initial BMKG sync + periodic refresh for Indonesia
   const runSync = () =>
-    syncIndonesiaEarthquakes(query, { days: 30, minmagnitude: 2.5 })
-      .then((r) => console.log("[USGS sync]", r))
-      .catch((e) => console.error("[USGS sync failed]", e.message));
+    syncIndonesiaEarthquakes(query, { minmagnitude: 2.5 })
+      .then((r) => console.log("[BMKG sync]", r))
+      .catch((e) => console.error("[BMKG sync failed]", e.message));
 
   runSync();
   setInterval(runSync, SYNC_INTERVAL_MS);

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { query } from "../db.js";
-import { syncIndonesiaEarthquakes } from "../services/usgs.js";
+import { syncIndonesiaEarthquakes } from "../services/bmkg.js";
 
 const router = Router();
 
@@ -71,22 +71,14 @@ router.get("/", async (req, res) => {
   }
 });
 
-/** POST|GET /api/earthquakes/sync — pull USGS Indonesia events into DB */
+/** POST|GET /api/earthquakes/sync — pull BMKG Indonesia events into DB */
 async function syncHandler(req, res) {
   try {
     const body = req.method === "POST" ? req.body || {} : {};
     const minmagnitude =
       Number(body.minmagnitude || req.query.minmagnitude) || 2.5;
-    const hours = Number(body.hours || req.query.hours) || null;
-    const days = Number(body.days || req.query.days) || null;
-    const starttime = body.from || body.starttime || req.query.from || null;
-    const endtime = body.to || body.endtime || req.query.to || null;
 
     const result = await syncIndonesiaEarthquakes(query, {
-      days: days || (hours || starttime ? null : 30),
-      hours,
-      starttime: starttime ? startOfDayIso(String(starttime)) : null,
-      endtime: endtime ? endOfDayIso(String(endtime)) : null,
       minmagnitude,
     });
 

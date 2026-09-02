@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node --watch src/index.js",
     "start": "node src/index.js",
-    "sync:usgs": "node src/scripts/syncUsgs.js"
+    "sync:bmkg": "node src/scripts/syncBmkg.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
