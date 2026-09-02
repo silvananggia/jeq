@@ -332,6 +332,7 @@ export default function App() {
           <div className="map-legend">
             <span className="dot quake" /> Informasi Gempa Terkini
             <span className="dot device" /> Sensor (MMI)
+            <span className="map-source">Sumber gempa: BMKG</span>
           </div>
         </section>
 

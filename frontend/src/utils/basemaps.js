@@ -6,18 +6,26 @@ const THUMB = { z: 12, x: 3263, y: 2118 };
 
 export const BASEMAPS = [
   {
-    id: "carto-grey",
-    label: "Grey",
-    attribution: "© OpenStreetMap © CARTO",
-    url: "https://{a-d}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-    thumb: `https://a.basemaps.cartocdn.com/light_all/${THUMB.z}/${THUMB.x}/${THUMB.y}.png`,
+    id: "osm-standard",
+    label: "Standard",
+    attribution: "© OpenStreetMap contributors",
+    url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    thumb: `https://tile.openstreetmap.org/${THUMB.z}/${THUMB.x}/${THUMB.y}.png`,
   },
   {
-    id: "carto-plain",
-    label: "Plain",
-    attribution: "© OpenStreetMap © CARTO",
-    url: "https://{a-d}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
-    thumb: `https://a.basemaps.cartocdn.com/rastertiles/voyager/${THUMB.z}/${THUMB.x}/${THUMB.y}.png`,
+    id: "osm-hot",
+    label: "Humanitarian",
+    attribution: "© OpenStreetMap contributors · HOT",
+    url: "https://{a-c}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+    thumb: `https://a.tile.openstreetmap.fr/hot/${THUMB.z}/${THUMB.x}/${THUMB.y}.png`,
+  },
+  {
+    id: "opentopomap",
+    label: "Terrain",
+    attribution: "© OpenStreetMap · SRTM · OpenTopoMap",
+    url: "https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png",
+    thumb: `https://a.tile.opentopomap.org/${THUMB.z}/${THUMB.x}/${THUMB.y}.png`,
+    maxZoom: 17,
   },
   {
     id: "google-hybrid",
@@ -27,16 +35,9 @@ export const BASEMAPS = [
     thumb: `https://mt1.google.com/vt/lyrs=y&x=${THUMB.x}&y=${THUMB.y}&z=${THUMB.z}`,
     maxZoom: 20,
   },
-  {
-    id: "carto-dark",
-    label: "Dark",
-    attribution: "© OpenStreetMap © CARTO",
-    url: "https://{a-d}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
-    thumb: `https://a.basemaps.cartocdn.com/dark_all/${THUMB.z}/${THUMB.x}/${THUMB.y}.png`,
-  },
 ];
 
-export const DEFAULT_BASEMAP = "carto-grey";
+export const DEFAULT_BASEMAP = "osm-standard";
 
 export function createBasemapLayer(basemapId = DEFAULT_BASEMAP) {
   const cfg = BASEMAPS.find((b) => b.id === basemapId) || BASEMAPS[0];

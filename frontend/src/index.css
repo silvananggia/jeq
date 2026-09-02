@@ -464,6 +464,7 @@ input {
   left: 0.75rem;
   bottom: 0.75rem;
   display: flex;
+  flex-wrap: wrap;
   gap: 0.85rem;
   align-items: center;
   padding: 0.4rem 0.65rem;
@@ -474,6 +475,10 @@ input {
   color: var(--muted);
   z-index: 2;
   pointer-events: none;
+}
+
+.map-source {
+  opacity: 0.85;
 }
 
 .basemap-picker {
