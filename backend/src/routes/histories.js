@@ -130,6 +130,11 @@ router.post("/", async (req, res) => {
     if (!eventId) {
       return res.status(400).json({ error: "event_id is required" });
     }
+    if (eventId.length > 200) {
+      return res
+        .status(400)
+        .json({ error: "event_id must be at most 200 characters" });
+    }
 
     if (!deviceId && body.dev_id) {
       const found = await query(

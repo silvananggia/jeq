@@ -115,7 +115,7 @@ curl -X POST http://localhost:4000/api/histories \
 DB yang sudah jalan bisa dimigrasi:
 
 ```bash
-psql -d jeq_platform -f migrate_histories_event_id.sql
+PGPASSWORD='your_password' psql -h 127.0.0.1 -U operatorgis -d jeqdb -f migrate_histories_event_id.sql
 ```
 
 ## Jalankan frontend

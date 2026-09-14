@@ -1,6 +1,10 @@
--- Add unique event_id for upsert ingest from Raspberry Pi
+-- Add unique event_id for upsert ingest from Raspberry Pi (varchar 200)
 ALTER TABLE histories
-  ADD COLUMN IF NOT EXISTS event_id VARCHAR(100);
+  ADD COLUMN IF NOT EXISTS event_id VARCHAR(200);
+
+-- Widen if column already existed as a shorter varchar
+ALTER TABLE histories
+  ALTER COLUMN event_id TYPE VARCHAR(200);
 
 -- Backfill existing rows so NOT NULL + UNIQUE can be applied
 UPDATE histories
