@@ -6,6 +6,7 @@ const router = Router();
 const RESERVED_KEYS = new Set([
   "device_id",
   "dev_id",
+  "event_id",
   "datetime",
   "id",
   "created_at",
@@ -89,7 +90,7 @@ router.get("/", async (req, res) => {
 
     const listParams = [...params, limit, offset];
     const { rows } = await query(
-      `SELECT h.id, h.device_id, h.datetime, h.data, h.created_at,
+      `SELECT h.id, h.device_id, h.event_id, h.datetime, h.data, h.created_at,
               d.dev_id, d.location AS device_location
        FROM histories h
        JOIN devices d ON d.id = h.device_id
@@ -117,12 +118,18 @@ router.get("/", async (req, res) => {
 /**
  * Ingest sensor reading from Raspberry Pi.
  * Accepts either device_id (DB pk) or dev_id (hardware id).
+ * event_id is unique — duplicate posts upsert (ON CONFLICT UPDATE).
  * Sensor params go in `data` JSONB (nested object or flat fields).
  */
 router.post("/", async (req, res) => {
   try {
     const body = req.body || {};
     let deviceId = body.device_id;
+    const eventId = body.event_id != null ? String(body.event_id).trim() : "";
+
+    if (!eventId) {
+      return res.status(400).json({ error: "event_id is required" });
+    }
 
     if (!deviceId && body.dev_id) {
       const found = await query(
@@ -145,10 +152,14 @@ router.post("/", async (req, res) => {
     const data = extractData(body);
 
     const { rows } = await query(
-      `INSERT INTO histories (device_id, datetime, data)
-       VALUES ($1, $2, $3::jsonb)
+      `INSERT INTO histories (device_id, event_id, datetime, data)
+       VALUES ($1, $2, $3, $4::jsonb)
+       ON CONFLICT (event_id) DO UPDATE SET
+         device_id = EXCLUDED.device_id,
+         datetime = EXCLUDED.datetime,
+         data = EXCLUDED.data
        RETURNING *`,
-      [deviceId, datetime, JSON.stringify(data)]
+      [deviceId, eventId, datetime, JSON.stringify(data)]
     );
 
     res.status(201).json({ data: rows[0] });

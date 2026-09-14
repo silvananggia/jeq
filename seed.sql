@@ -35,9 +35,10 @@ WHERE u.name = 'Demo User'
   );
 
 -- 5 histories per device (skip if device already has any history)
-INSERT INTO histories (device_id, datetime, data)
+INSERT INTO histories (device_id, event_id, datetime, data)
 SELECT
   d.id,
+  d.dev_id || '-seed-' || s.hours,
   NOW() - (s.hours || ' hours')::interval,
   jsonb_build_object(
     'mmi', s.mmi,

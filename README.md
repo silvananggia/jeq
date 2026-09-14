@@ -78,27 +78,15 @@ API utama:
 | PATCH | `/api/devices/by-dev/:devId` | Update metadata device |
 | GET/POST | `/api/histories` | Riwayat pembacaan sensor |
 
-Contoh kirim data dari Raspberry Pi (parameter sensor disimpan sebagai JSON `data` — field boleh berubah tanpa migrasi DB):
+Contoh kirim data dari Raspberry Pi (`event_id` unik — POST ulang dengan `event_id` sama akan update row):
 
 ```bash
-# Flat fields (otomatis masuk ke kolom data)
+# Nested object (disarankan)
 curl -X POST http://localhost:4000/api/histories \
   -H 'Content-Type: application/json' \
   -d '{
     "dev_id": "jeq-00001",
-    "mmi": 2.3,
-    "horiz_pga": 0.015,
-    "vert_pga": 0.009,
-    "vh_ratio": 0.6,
-    "pgv_cm": 0.5,
-    "dom_freq": 4.2
-  }'
-
-# Atau nested object
-curl -X POST http://100.95.74.7:4000/api/histories \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "dev_id": "jeq-00001",
+    "event_id": "evt-20260326-001",
     "data": {
       "mmi": 2.3,
       "horiz_pga": 0.015,
@@ -108,12 +96,26 @@ curl -X POST http://100.95.74.7:4000/api/histories \
       "dom_freq": 4.2
     }
   }'
+
+# Flat fields (otomatis masuk ke kolom data)
+curl -X POST http://localhost:4000/api/histories \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "dev_id": "jeq-00001",
+    "event_id": "evt-20260326-001",
+    "mmi": 2.3,
+    "horiz_pga": 0.015,
+    "vert_pga": 0.009,
+    "vh_ratio": 0.6,
+    "pgv_cm": 0.5,
+    "dom_freq": 4.2
+  }'
 ```
 
-DB yang sudah jalan dengan schema lama bisa dimigrasi:
+DB yang sudah jalan bisa dimigrasi:
 
 ```bash
-psql -d jeq_platform -f migrate_histories_json.sql
+psql -d jeq_platform -f migrate_histories_event_id.sql
 ```
 
 ## Jalankan frontend

@@ -38,6 +38,7 @@ CREATE TABLE earthquakes (
 CREATE TABLE histories (
     id BIGSERIAL PRIMARY KEY,
     device_id BIGINT NOT NULL,
+    event_id VARCHAR(100) NOT NULL UNIQUE,
     datetime TIMESTAMPTZ NOT NULL,
     -- Sensor reading payload (flexible; add/remove keys without schema changes)
     data JSONB NOT NULL DEFAULT '{}'::jsonb,
